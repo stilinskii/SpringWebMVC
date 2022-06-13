@@ -13,6 +13,7 @@
         <h2>상품 목록</h2>
       </div>
       <div class="row">
+        <h2 th:text="${param.status== 'delete'} ? '삭제완료' "></h2>
         <div class="col">
           <button
             class="btn btn-primary float-end"

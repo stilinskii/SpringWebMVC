@@ -37,6 +37,10 @@ public class ItemRepository {
         //정석으로 하려고하면 객체를 받는게 맞다
     }
 
+    public void delete(Long itemId){
+        store.remove(itemId);
+    }
+
     public void clearStore(){
         store.clear();
     }
