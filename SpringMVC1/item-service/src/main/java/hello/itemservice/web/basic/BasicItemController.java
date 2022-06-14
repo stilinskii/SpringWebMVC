@@ -68,7 +68,7 @@ public class BasicItemController {
     @GetMapping("/{itemId}/delete")
     public String delete(@PathVariable Long itemId, RedirectAttributes redirectAttributes){
         itemRepository.delete(itemId);
-        redirectAttributes.addAttribute("status","delete");
+        redirectAttributes.addAttribute("delete",true);
 
         return "redirect:/basic/items";
     }
