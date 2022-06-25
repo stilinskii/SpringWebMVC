@@ -18,7 +18,7 @@ public class HomeController {
     private final MemberRepository memberRepository;
 
 
-    @GetMapping("/")
+//    @GetMapping("/")
     public String home() {
         return "home";
     }
@@ -29,12 +29,12 @@ public class HomeController {
             return "home";
         }
 
-
+        //로그인
         Member loginMember = memberRepository.findById(memberId);
         if(loginMember == null){
             return "home";
         }
         model.addAttribute("member",loginMember);
-        return "returnLogiform";
+        return "loginHome";
     }
 }
