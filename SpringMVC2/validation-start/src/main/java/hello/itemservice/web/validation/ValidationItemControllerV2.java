@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
+import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -116,7 +117,7 @@ public class ValidationItemControllerV2 {
         return "redirect:/validation/v2/items/{itemId}";
     }
 
-    @PostMapping("/add")
+   // @PostMapping("/add")
     public String addItemV3(@ModelAttribute Item item, BindingResult bindingResult,
                             RedirectAttributes redirectAttributes) {
         if (!StringUtils.hasText(item.getItemName())) {
@@ -153,9 +154,22 @@ public class ValidationItemControllerV2 {
     @PostMapping("/add")
     public String addItemV4(@ModelAttribute Item item, BindingResult bindingResult,
                             RedirectAttributes redirectAttributes) {
-        if (!StringUtils.hasText(item.getItemName())) {
-            bindingResult.rejectValue("item","required");
+        //검증로직 , empty나 공백같은 단순한 기능만 제공
+        ValidationUtils.rejectIfEmptyOrWhitespace(bindingResult,"itemName","required");
+        log.info("errors={}",bindingResult);
+        //       위에꺼와 같음
+//        if (!StringUtils.hasText(item.getItemName())) {
+//            bindingResult.rejectValue("item","required");
+//        }
+
+        //바인딩 실패하면 밑으로 안가게. 오류메세지 하나만 출력하기 위함
+        if (bindingResult.hasErrors()) {
+            log.info("errors={}", bindingResult);
+            return "validation/v2/addForm";
         }
+
+
+
         if (item.getPrice() == null || item.getPrice() < 1000 || item.getPrice() > 1000000) {
             bindingResult.rejectValue("price","range",new Object[]{1000,1000000},null);
 
@@ -169,12 +183,10 @@ public class ValidationItemControllerV2 {
             int resultPrice = item.getPrice() * item.getQuantity();
             if (resultPrice < 10000) {
                 bindingResult.reject("totalPriceMin", new Object[]{10000, resultPrice}, null);
+
             }
         }
-        if (bindingResult.hasErrors()) {
-            log.info("errors={}", bindingResult);
-            return "validation/v2/addForm";
-        }
+
         //성공 로직
         Item savedItem = itemRepository.save(item);
         redirectAttributes.addAttribute("itemId", savedItem.getId());
